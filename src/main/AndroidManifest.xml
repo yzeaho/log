@@ -1,0 +1,26 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="club.godfather.support.log">
+
+    <permission
+        android:name="${applicationId}.permission.LOG_INSTRUMENTATION"
+        android:protectionLevel="signature" />
+
+    <uses-permission android:name="${applicationId}.permission.LOG_INSTRUMENTATION" />
+
+    <application>
+
+        <service
+            android:name=".LogService"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="${applicationId}.permission.LOG_INSTRUMENTATION"
+            android:process=":log">
+            <intent-filter>
+                <action android:name="${applicationId}.action.LOG_INSTRUMENTATION" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </service>
+
+    </application>
+
+</manifest>
