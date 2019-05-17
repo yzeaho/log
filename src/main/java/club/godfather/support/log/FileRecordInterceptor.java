@@ -19,15 +19,15 @@ import java.util.Locale;
 public class FileRecordInterceptor extends LogInterceptor.Stub {
 
     private static final String TAG = "FileRecordInterceptor";
-    private String dir;
+    private File dir;
     private BufferedOutputStream out;
 
-    public FileRecordInterceptor(@NonNull String _dir) {
-        this(_dir, true);
+    public FileRecordInterceptor(@NonNull File dir) {
+        this(dir, true);
     }
 
-    public FileRecordInterceptor(@NonNull String _dir, boolean deleteEnabled) {
-        dir = _dir;
+    public FileRecordInterceptor(@NonNull File dir, boolean deleteEnabled) {
+        this.dir = dir;
         if (deleteEnabled) {
             new LogDeleteTask(dir).start();
         }
@@ -37,7 +37,7 @@ public class FileRecordInterceptor extends LogInterceptor.Stub {
     public void proceed(int level, String tag, String text, long time) {
         try {
             if (out == null) {
-                out = init(new File(dir));
+                out = init(dir);
             }
             text = formatLog(level, tag, text, time);
             out.write(text.getBytes());

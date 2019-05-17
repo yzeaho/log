@@ -19,10 +19,10 @@ class LogDeleteTask implements FilenameFilter, Action {
 
     private static final String TAG = "LogDeleteTask";
     private static final long EXPIRED_TIME = 1000L * 60 * 60 * 24 * 30;
-    private String dir;
+    private File dir;
     private long currentTime;
 
-    LogDeleteTask(String dir) {
+    LogDeleteTask(File dir) {
         this.dir = dir;
     }
 
@@ -51,8 +51,7 @@ class LogDeleteTask implements FilenameFilter, Action {
             return;
         }
         currentTime = System.currentTimeMillis();
-        File d = new File(dir);
-        File[] fs = d.listFiles(this);
+        File[] fs = dir.listFiles(this);
         if (fs != null) {
             for (File f : fs) {
                 //noinspection ResultOfMethodCallIgnored

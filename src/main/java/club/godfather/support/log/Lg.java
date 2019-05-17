@@ -10,6 +10,8 @@ import java.util.List;
  * <p>
  * 在Application里面进行设置参数
  * <pre>Lg.setLg(new AndroidLgImpl(this));</pre>
+ * 设置日志记录级别
+ * <pre>Lg.setLevel(Log.DEBUG);</pre>
  * 通过{@link #d Lg.d()},{@link #i Lg.i()}等方法记录日志
  * 如果需要记录日志到文件，请增加文件记录拦截器{@link FileRecordInterceptor}
  * </p>
