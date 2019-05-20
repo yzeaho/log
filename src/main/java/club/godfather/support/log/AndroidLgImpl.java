@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.reactivex.Completable;
-import io.reactivex.Scheduler;
 import io.reactivex.functions.Action;
 
 /**
@@ -22,7 +21,6 @@ public class AndroidLgImpl implements LgInterface {
     private int level = Log.INFO;
     private final List<LogInterceptor> interceptors = new CopyOnWriteArrayList<>();
     private final LogClient client = new LogClient();
-    private final Scheduler LOG_SCHEDULER = LogScheduler.from();
 
     public AndroidLgImpl(Context context) {
         this.context = context.getApplicationContext();
@@ -104,7 +102,7 @@ public class AndroidLgImpl implements LgInterface {
             public void run() throws Exception {
                 printImpl(level, tag, msg, throwable, time);
             }
-        }).subscribeOn(LOG_SCHEDULER).onErrorComplete().subscribe();
+        }).subscribeOn(LogScheduler.INSTANCE).onErrorComplete().subscribe();
     }
 
     private void printImpl(int level, String tag, String msg, Throwable throwable, long time) throws Exception {

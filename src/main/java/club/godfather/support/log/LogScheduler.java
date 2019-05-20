@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers;
 class LogScheduler {
 
     @NonNull
-    static Scheduler from() {
+    private static Scheduler from() {
         ThreadFactory threadFactory = new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
@@ -22,4 +22,6 @@ class LogScheduler {
         //noinspection UnstableApiUsage
         return Schedulers.from(Executors.newSingleThreadExecutor(threadFactory), false);
     }
+
+    static final Scheduler INSTANCE = from();
 }

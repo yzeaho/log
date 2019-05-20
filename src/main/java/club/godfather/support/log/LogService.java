@@ -27,11 +27,8 @@ public class LogService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i(TAG, "onStartCommand " + intent);
-        if (intent != null) {
-            String action = intent.getAction();
-            if ("".equals(action)) {
-                Lg.setLevel(intent.getIntExtra("_level", Log.INFO));
-            }
+        if (intent != null && intent.hasExtra("_level")) {
+            Lg.setLevel(intent.getIntExtra("_level", Log.INFO));
         }
         return super.onStartCommand(intent, flags, startId);
     }
