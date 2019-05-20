@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'club.godfather.support:log:0.0.1'
+    implementation 'club.godfather.support:log:1.0.0'
 }
 ```
 
