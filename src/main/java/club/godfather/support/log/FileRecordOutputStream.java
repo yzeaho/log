@@ -1,7 +1,5 @@
 package club.godfather.support.log;
 
-import android.support.annotation.NonNull;
-
 import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.util.Calendar;
@@ -11,7 +9,7 @@ class FileRecordOutputStream extends BufferedOutputStream {
 
     private final Calendar calendar;
 
-    FileRecordOutputStream(OutputStream out, @NonNull Date date) {
+    FileRecordOutputStream(OutputStream out, Date date) {
         super(out);
         calendar = Calendar.getInstance();
         calendar.setTime(date);

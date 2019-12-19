@@ -1,13 +1,15 @@
 package club.godfather.support.log;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.os.Process;
 import android.util.Log;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.reactivex.Completable;
+import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Action;
 
 /**
@@ -21,6 +23,7 @@ public class AndroidLgImpl implements LgInterface {
     private int level = Log.INFO;
     private final List<LogInterceptor> interceptors = new CopyOnWriteArrayList<>();
     private final LogClient client = new LogClient();
+    private Formatter formatter = new AndroidFormatter();
 
     public AndroidLgImpl(Context context) {
         this.context = context.getApplicationContext();
@@ -32,7 +35,27 @@ public class AndroidLgImpl implements LgInterface {
     }
 
     @Override
+    public void v(String tag, String msg, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception e) {
+            //ignore
+        }
+        println(Log.VERBOSE, tag, msg);
+    }
+
+    @Override
     public void d(String tag, String msg) {
+        println(Log.DEBUG, tag, msg);
+    }
+
+    @Override
+    public void d(String tag, String msg, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception e) {
+            //ignore
+        }
         println(Log.DEBUG, tag, msg);
     }
 
@@ -42,7 +65,27 @@ public class AndroidLgImpl implements LgInterface {
     }
 
     @Override
+    public void i(String tag, String msg, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception e) {
+            //ignore
+        }
+        println(Log.INFO, tag, msg);
+    }
+
+    @Override
     public void w(String tag, String msg) {
+        println(Log.WARN, tag, msg);
+    }
+
+    @Override
+    public void w(String tag, String msg, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception e) {
+            //ignore
+        }
         println(Log.WARN, tag, msg);
     }
 
@@ -52,12 +95,42 @@ public class AndroidLgImpl implements LgInterface {
     }
 
     @Override
+    public void w(String tag, String msg, Throwable e, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception ex) {
+            //ignore
+        }
+        println(Log.WARN, tag, msg, e);
+    }
+
+    @Override
     public void e(String tag, String msg) {
         println(Log.ERROR, tag, msg);
     }
 
     @Override
+    public void e(String tag, String msg, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception ex) {
+            //ignore
+        }
+        println(Log.ERROR, tag, msg);
+    }
+
+    @Override
     public void e(String tag, String msg, Throwable e) {
+        println(Log.ERROR, tag, msg, e);
+    }
+
+    @Override
+    public void e(String tag, String msg, Throwable e, Object... objects) {
+        try {
+            msg = String.format(msg, objects);
+        } catch (Exception ex) {
+            //ignore
+        }
         println(Log.ERROR, tag, msg, e);
     }
 
@@ -72,12 +145,12 @@ public class AndroidLgImpl implements LgInterface {
     }
 
     @Override
-    public void addInterceptor(@NonNull LogInterceptor interceptor) {
+    public void addInterceptor(LogInterceptor interceptor) {
         interceptors.add(interceptor);
     }
 
     @Override
-    public void removeInterceptor(@NonNull LogInterceptor interceptor) {
+    public void removeInterceptor(LogInterceptor interceptor) {
         interceptors.remove(interceptor);
     }
 
@@ -91,25 +164,45 @@ public class AndroidLgImpl implements LgInterface {
         return level >= this.level;
     }
 
+    @Override
+    public Formatter formatter() {
+        return formatter;
+    }
+
     private void println(int level, String tag, String msg) {
-        println(level, tag, msg, null);
+        println(level, tag, msg, null, Thread.currentThread().getStackTrace()[5]);
     }
 
     private void println(final int level, final String tag, final String msg, final Throwable throwable) {
-        final long time = System.currentTimeMillis();
+        println(level, tag, msg, throwable, Thread.currentThread().getStackTrace()[5]);
+    }
+
+    private void println(final int level, final String tag, final String msg, final Throwable throwable, @NonNull StackTraceElement element) {
+        final LogMessage message = new LogMessage();
+        message.level = level;
+        message.tag = tag;
+        message.content = (throwable == null ? msg : (msg + "\n" + Log.getStackTraceString(throwable)));
+        message.time = System.currentTimeMillis();
+        message.pid = Process.myPid();
+        message.threadId = Thread.currentThread().getId();
+        message.threadName = Thread.currentThread().getName();
+        message.className = element.getClassName();
+        message.methodName = element.getMethodName();
+        message.lineNumber = element.getLineNumber();
+        message.fileName = element.getFileName();
         Completable.fromAction(new Action() {
             @Override
             public void run() throws Exception {
-                printImpl(level, tag, msg, throwable, time);
+                printImpl(message);
             }
         }).subscribeOn(LogScheduler.INSTANCE).onErrorComplete().subscribe();
     }
 
-    private void printImpl(int level, String tag, String msg, Throwable throwable, long time) throws Exception {
-        String m = (throwable == null ? msg : (msg + "\n" + Log.getStackTraceString(throwable)));
+    private void printImpl(LogMessage message) throws Exception {
+        String m = message.content;
         int length = m.length();
         if (length <= MAX_LENGTH) {
-            p(level, tag, m, time);
+            p(message);
         } else {
             int index = 0;
             String str;
@@ -120,12 +213,18 @@ public class AndroidLgImpl implements LgInterface {
                     str = m.substring(index, index + MAX_LENGTH);
                 }
                 index += MAX_LENGTH;
-                p(level, tag, str, time);
+                LogMessage clone = message.clone();
+                clone.content = str;
+                p(clone);
             }
         }
     }
 
-    private void p(int level, String tag, String text, long time) throws Exception {
-        client.log(context, level, tag, text, time);
+    @SuppressLint("LogTagMismatch")
+    private void p(LogMessage message) throws Exception {
+        if (isLoggable(level)) {
+            Log.println(message.level, message.tag, message.content);
+            client.log(context, message);
+        }
     }
 }

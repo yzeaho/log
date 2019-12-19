@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.util.concurrent.CountDownLatch;
@@ -33,7 +32,7 @@ class LogClient implements ServiceConnection {
         service = null;
     }
 
-    private void connect(@NonNull Context context) throws InterruptedException {
+    private void connect(Context context) throws InterruptedException {
         Log.i(TAG, "connect");
         latch = new CountDownLatch(1);
         Intent intent = new Intent(context, LogService.class);
@@ -46,13 +45,12 @@ class LogClient implements ServiceConnection {
     }
 
     @SuppressLint("LogTagMismatch")
-    void log(Context context, int level, String tag, String text, long time) throws InterruptedException, RemoteException {
+    void log(Context context, LogMessage message) throws InterruptedException, RemoteException {
         if (service == null) {
             connect(context);
         }
-        if (service.isLoggable(level)) {
-            Log.println(level, tag, text);
-            service.log(level, tag, text, time);
+        if (service.isLoggable(message.level)) {
+            service.log(message);
         }
     }
 }

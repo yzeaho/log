@@ -1,8 +1,9 @@
 package club.godfather.support.log;
 
-import android.support.annotation.NonNull;
-
+import java.text.Format;
 import java.util.List;
+
+import io.reactivex.annotations.NonNull;
 
 /**
  * 日志记录
@@ -41,6 +42,10 @@ public class Lg {
         sImpl.v(tag, msg);
     }
 
+    public static void v(String tag, String msg, Object... objects) {
+        sImpl.v(tag, msg, objects);
+    }
+
     /**
      * 发送一个{@link android.util.Log#DEBUG}级别的日志消息.
      *
@@ -49,6 +54,10 @@ public class Lg {
      */
     public static void d(String tag, String msg) {
         sImpl.d(tag, msg);
+    }
+
+    public static void d(String tag, String msg, Object... objects) {
+        sImpl.d(tag, msg, objects);
     }
 
     /**
@@ -61,6 +70,10 @@ public class Lg {
         sImpl.i(tag, msg);
     }
 
+    public static void i(String tag, String msg, Object... objects) {
+        sImpl.i(tag, msg, objects);
+    }
+
     /**
      * 发送一个{@link android.util.Log#WARN}级别的日志消息.
      *
@@ -69,6 +82,10 @@ public class Lg {
      */
     public static void w(String tag, String msg) {
         sImpl.w(tag, msg);
+    }
+
+    public static void w(String tag, String msg, Object... objects) {
+        sImpl.w(tag, msg, objects);
     }
 
     /**
@@ -82,6 +99,10 @@ public class Lg {
         sImpl.w(tag, msg, e);
     }
 
+    public static void w(String tag, String msg, Throwable e, Object... objects) {
+        sImpl.w(tag, msg, e, objects);
+    }
+
     /**
      * 发送一个{@link android.util.Log#ERROR}级别的日志消息.
      *
@@ -90,6 +111,10 @@ public class Lg {
      */
     public static void e(String tag, String msg) {
         sImpl.e(tag, msg);
+    }
+
+    public static void e(String tag, String msg, Object... objects) {
+        sImpl.e(tag, msg, objects);
     }
 
     /**
@@ -101,6 +126,10 @@ public class Lg {
      */
     public static void e(String tag, String msg, Throwable e) {
         sImpl.e(tag, msg, e);
+    }
+
+    public static void e(String tag, String msg, Throwable e, Object... objects) {
+        sImpl.e(tag, msg, e, objects);
     }
 
     /**
@@ -161,5 +190,10 @@ public class Lg {
      */
     public static boolean isLoggable(int level) {
         return sImpl.isLoggable(level);
+    }
+
+    @NonNull
+    public static Formatter formatter() {
+        return sImpl.formatter();
     }
 }

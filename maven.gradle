@@ -1,14 +1,16 @@
 apply plugin: 'maven'
-apply plugin: 'signing'
 
 uploadArchives {
     repositories.mavenDeployer {
-        repository(url: PROJ_REPO_URL) {
-            authentication(userName: PROJ_USERNAME, password: PROJ_PASSWORD)
-        }
         pom.groupId = PROJ_GROUP
         pom.artifactId = PROJ_ARTIFACTID
         pom.version = PROJ_VERSION
+        repository(url: PROJ_REPO_URL) {
+            authentication(userName: PROJ_USERNAME, password: PROJ_PASSWORD)
+        }
+        snapshotRepository(url: PROJ_REPO_URL_SNAPSHOT) {
+            authentication(userName: PROJ_USERNAME, password: PROJ_PASSWORD)
+        }
     }
 }
 

@@ -1,7 +1,5 @@
 package club.godfather.support.log;
 
-import android.os.Process;
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.File;
@@ -11,6 +9,8 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import io.reactivex.annotations.NonNull;
 
 /**
  * 日志记录
@@ -34,45 +34,18 @@ public class FileRecordInterceptor extends LogInterceptor.Stub {
     }
 
     @Override
-    public void proceed(int level, String tag, String text, long time) {
+    public void proceed(LogMessage message) {
         try {
-            if (out == null || !out.check(time)) {
+            if (out == null || !out.check(message.time)) {
                 close(out);
                 out = init(dir);
             }
-            text = formatLog(level, tag, text, time);
+            String text = Lg.formatter().format(message);
             out.write(text.getBytes());
             out.write(0x0A);
             out.flush();
         } catch (Exception e) {
             Log.w(TAG, "", e);
-        }
-    }
-
-    /**
-     * 格式化日志格式
-     */
-    private String formatLog(int level, String tag, String text, long time) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.CHINA);
-        return String.format("%s %s/%s(%s) [%s] %s", sdf.format(new Date(time)), getLevel(level), tag,
-                Process.myPid(), Thread.currentThread().getName(), text);
-    }
-
-    private String getLevel(int level) {
-        switch (level) {
-            case Log.VERBOSE:
-                return "V";
-            case Log.INFO:
-                return "I";
-            case Log.WARN:
-                return "W";
-            case Log.ERROR:
-                return "E";
-            case Log.ASSERT:
-                return "A";
-            case Log.DEBUG:
-            default:
-                return "D";
         }
     }
 

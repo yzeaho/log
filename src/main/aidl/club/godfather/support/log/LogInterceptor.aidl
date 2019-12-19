@@ -1,6 +1,8 @@
 package club.godfather.support.log;
 
+import club.godfather.support.log.LogMessage;
+
 interface LogInterceptor {
 
-    void proceed(int level, String tag, String text, long time);
+    void proceed(in LogMessage message);
 }

@@ -1,10 +1,11 @@
 package club.godfather.support.log;
 
 import club.godfather.support.log.LogInterceptor;
+import club.godfather.support.log.LogMessage;
 
 interface LogAidlInterface {
 
-    void log(int level, String tag, String text, long time);
+    void log(in LogMessage message);
 
     void addInterceptor(LogInterceptor interceptor);
 
@@ -15,8 +16,4 @@ interface LogAidlInterface {
     int getLevel();
 
     boolean isLoggable(int level);
-
-    void copy(String filepath);
-
-    String zip(String filename);
 }

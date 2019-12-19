@@ -3,7 +3,6 @@ package club.godfather.support.log;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 public class LogService extends Service {
@@ -11,7 +10,6 @@ public class LogService extends Service {
     private static final String TAG = "LogService";
     private LogAidlStub stub;
 
-    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return stub;
@@ -21,7 +19,7 @@ public class LogService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.i(TAG, "onCreate " + this);
-        stub = new LogAidlStub(getApplicationContext());
+        stub = new LogAidlStub();
     }
 
     @Override

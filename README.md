@@ -1,4 +1,4 @@
-# log--方便好用的日志记录工具
+# log4god -- 方便好用的日志记录工具
 * **跨进程**  
 支持跨进程记录日志，多进程通过aidl实现。
 * **拦截器**  
@@ -7,6 +7,8 @@
 支持同一签名的第三方应用抓取日志。
 * **自动拆分**  
 android系统日志的长度太长会出现丢失的问题，长度超过3K的将其拆分成多条。
+* **字符串格式化**
+提供支持String.format()参数
 
 ![log.png](log.png) 
 
@@ -19,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'club.godfather.support:log:1.0.0'
+    implementation 'club.godfather.support:log:1.0.1'
 }
 ```
 
