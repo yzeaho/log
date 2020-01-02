@@ -2,8 +2,6 @@ package club.godfather.support.log;
 
 import java.util.List;
 
-import io.reactivex.annotations.NonNull;
-
 /**
  * 日志接口
  * Created by y on 2016/8/26.
@@ -49,7 +47,4 @@ public interface LgInterface {
     List<LogInterceptor> interceptors();
 
     boolean isLoggable(int level);
-
-    @NonNull
-    Formatter formatter();
 }

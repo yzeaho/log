@@ -17,11 +17,11 @@ android系统日志的长度太长会出现丢失的问题，长度超过3K的�
 ```gradle
 repositories {
     //...
-    maven { url 'http://god-father.club:8081/repository/maven-releases/' }
+    maven { url 'http://god-father.club/repository/maven-releases/' }
 }
 
 dependencies {
-    implementation 'club.godfather.support:log:1.0.1'
+    implementation 'club.godfather.support:log:1.0.2'
 }
 ```
 
@@ -39,6 +39,6 @@ Lg.d(TAG, "log message");
 
 如果需要记录日志到文件
 ```Java
-File dir = new File(context.getFilesDir(), "log");
+File dir = new File(context.getFilesDir(), "log4god");
 Lg.addInterceptor(new FileRecordInterceptor(dir));
 ```

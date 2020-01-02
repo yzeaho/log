@@ -21,15 +21,21 @@ public class FileRecordInterceptor extends LogInterceptor.Stub {
     private static final String TAG = "FileRecordInterceptor";
     private File dir;
     private FileRecordOutputStream out;
+    private Formatter formatter;
 
     public FileRecordInterceptor(@NonNull File dir) {
         this(dir, true);
     }
 
     public FileRecordInterceptor(@NonNull File dir, boolean deleteEnabled) {
+        this(dir, deleteEnabled, new AndroidFormatter());
+    }
+
+    public FileRecordInterceptor(@NonNull File dir, boolean deleteEnabled, @NonNull Formatter formatter) {
         this.dir = dir;
+        this.formatter = formatter;
         if (deleteEnabled) {
-            new LogDeleteTask(dir).start();
+            new FileRecordLogDeleteTask(dir).start();
         }
     }
 
@@ -40,7 +46,7 @@ public class FileRecordInterceptor extends LogInterceptor.Stub {
                 close(out);
                 out = init(dir);
             }
-            String text = Lg.formatter().format(message);
+            String text = formatter.format(message);
             out.write(text.getBytes());
             out.write(0x0A);
             out.flush();

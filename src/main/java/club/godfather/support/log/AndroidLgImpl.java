@@ -1,6 +1,5 @@
 package club.godfather.support.log;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Process;
 import android.util.Log;
@@ -23,7 +22,6 @@ public class AndroidLgImpl implements LgInterface {
     private int level = Log.INFO;
     private final List<LogInterceptor> interceptors = new CopyOnWriteArrayList<>();
     private final LogClient client = new LogClient();
-    private Formatter formatter = new AndroidFormatter();
 
     public AndroidLgImpl(Context context) {
         this.context = context.getApplicationContext();
@@ -164,11 +162,6 @@ public class AndroidLgImpl implements LgInterface {
         return level >= this.level;
     }
 
-    @Override
-    public Formatter formatter() {
-        return formatter;
-    }
-
     private void println(int level, String tag, String msg) {
         println(level, tag, msg, null, Thread.currentThread().getStackTrace()[5]);
     }
@@ -199,6 +192,9 @@ public class AndroidLgImpl implements LgInterface {
     }
 
     private void printImpl(LogMessage message) throws Exception {
+        if (!isLoggable(message.level)) {
+            return;
+        }
         String m = message.content;
         int length = m.length();
         if (length <= MAX_LENGTH) {
@@ -220,11 +216,8 @@ public class AndroidLgImpl implements LgInterface {
         }
     }
 
-    @SuppressLint("LogTagMismatch")
     private void p(LogMessage message) throws Exception {
-        if (isLoggable(level)) {
-            Log.println(message.level, message.tag, message.content);
-            client.log(context, message);
-        }
+        Log.println(message.level, message.tag, message.content);
+        client.log(context, message);
     }
 }

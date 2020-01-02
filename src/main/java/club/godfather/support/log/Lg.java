@@ -1,6 +1,5 @@
 package club.godfather.support.log;
 
-import java.text.Format;
 import java.util.List;
 
 import io.reactivex.annotations.NonNull;
@@ -20,7 +19,7 @@ import io.reactivex.annotations.NonNull;
  */
 public class Lg {
 
-    private static LgInterface sImpl = new JavaLgInterface();
+    private static LgInterface sImpl = new EmptyLgInterface();
 
     /**
      * 设置日志接口的实现类
@@ -190,10 +189,5 @@ public class Lg {
      */
     public static boolean isLoggable(int level) {
         return sImpl.isLoggable(level);
-    }
-
-    @NonNull
-    public static Formatter formatter() {
-        return sImpl.formatter();
     }
 }

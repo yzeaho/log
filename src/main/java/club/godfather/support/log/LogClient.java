@@ -1,6 +1,5 @@
 package club.godfather.support.log;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
@@ -44,7 +43,6 @@ class LogClient implements ServiceConnection {
         Log.i(TAG, "connect finish");
     }
 
-    @SuppressLint("LogTagMismatch")
     void log(Context context, LogMessage message) throws InterruptedException, RemoteException {
         if (service == null) {
             connect(context);

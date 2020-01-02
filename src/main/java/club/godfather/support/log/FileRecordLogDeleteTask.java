@@ -15,14 +15,14 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * 删除放置超过一个月的日志文件
  */
-class LogDeleteTask implements FilenameFilter, Action {
+class FileRecordLogDeleteTask implements FilenameFilter, Action {
 
-    private static final String TAG = "LogDeleteTask";
+    private static final String TAG = "FileRecordLogDeleteTask";
     private static final long EXPIRED_TIME = 1000L * 60 * 60 * 24 * 30;
     private File dir;
     private long currentTime;
 
-    LogDeleteTask(File dir) {
+    FileRecordLogDeleteTask(File dir) {
         this.dir = dir;
     }
 
@@ -35,7 +35,7 @@ class LogDeleteTask implements FilenameFilter, Action {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         try {
             Date date = sdf.parse(name);
-            if (Math.abs(currentTime - date.getTime()) > EXPIRED_TIME) {
+            if (date != null && Math.abs(currentTime - date.getTime()) > EXPIRED_TIME) {
                 Log.i(TAG, "add file " + name + " to delete");
                 return true;
             }

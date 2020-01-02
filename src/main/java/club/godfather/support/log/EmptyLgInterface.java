@@ -1,20 +1,9 @@
 package club.godfather.support.log;
 
-import android.util.Log;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-public class JavaLgInterface implements LgInterface {
-
-    private int level = Log.INFO;
-    private List<LogInterceptor> interceptors = new CopyOnWriteArrayList<>();
-    private Formatter formatter = new Formatter() {
-        @Override
-        public String format(LogMessage message) {
-            return message.content;
-        }
-    };
+public class EmptyLgInterface implements LgInterface {
 
     @Override
     public void v(String tag, String msg) {
@@ -92,36 +81,28 @@ public class JavaLgInterface implements LgInterface {
 
     @Override
     public void setLevel(int level) {
-        this.level = level;
     }
 
     @Override
     public int getLevel() {
-        return level;
+        return 0;
     }
 
     @Override
     public void addInterceptor(LogInterceptor interceptor) {
-        interceptors.add(interceptor);
     }
 
     @Override
     public void removeInterceptor(LogInterceptor interceptor) {
-        interceptors.remove(interceptor);
     }
 
     @Override
     public List<LogInterceptor> interceptors() {
-        return interceptors;
+        return null;
     }
 
     @Override
     public boolean isLoggable(int level) {
-        return this.level <= level;
-    }
-
-    @Override
-    public Formatter formatter() {
-        return formatter;
+        return false;
     }
 }

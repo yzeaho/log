@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
-apply from: 'maven.gradle'
+apply from: '../maven.gradle'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         minSdkVersion 14
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

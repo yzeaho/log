@@ -1,6 +1,5 @@
 package club.godfather.support.log;
 
-import android.annotation.SuppressLint;
 import android.os.RemoteException;
 import android.util.Log;
 
@@ -11,22 +10,26 @@ class LogAidlStub extends LogAidlInterface.Stub {
 
     private static final String TAG = "LogAidlStub";
 
-    @SuppressLint("LogTagMismatch")
     @Override
     public void log(LogMessage message) {
-        if (Lg.isLoggable(message.level)) {
-            List<LogInterceptor> deleteList = new ArrayList<>();
-            for (LogInterceptor interceptor : Lg.interceptors()) {
-                try {
-                    interceptor.proceed(message);
-                } catch (RemoteException e) {
-                    Log.w(TAG, e.toString());
-                    deleteList.add(interceptor);
-                }
+        if (!Lg.isLoggable(message.level)) {
+            return;
+        }
+        List<LogInterceptor> interceptorList = Lg.interceptors();
+        if (interceptorList == null || interceptorList.isEmpty()) {
+            return;
+        }
+        List<LogInterceptor> deleteList = new ArrayList<>();
+        for (LogInterceptor interceptor : Lg.interceptors()) {
+            try {
+                interceptor.proceed(message);
+            } catch (RemoteException e) {
+                Log.w(TAG, e.toString());
+                deleteList.add(interceptor);
             }
-            for (LogInterceptor interceptor : deleteList) {
-                Lg.removeInterceptor(interceptor);
-            }
+        }
+        for (LogInterceptor interceptor : deleteList) {
+            Lg.removeInterceptor(interceptor);
         }
     }
 
